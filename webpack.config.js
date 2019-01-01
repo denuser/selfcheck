@@ -7,17 +7,18 @@ module.exports = {
         filename: 'bundle.js'
     },
     devtool: 'inline-source-map',
+    mode: "development",
     module: {
         rules: [
             {
                 test: /\.(es6|js|jsx)$/,
-                    exclude: /(node_modules)/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: ['@babel/preset-env', '@babel/preset-react']
-                        }
+                exclude: /(node_modules)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
                     }
+                }
             }
         ]
     }

@@ -1,26 +1,22 @@
 import { delay } from 'redux-saga'
 import { put, takeEvery } from 'redux-saga/effects'
-import {all} from 'redux-saga/effects'
+import { all } from 'redux-saga/effects'
+import * as types from "../actions/types"
+import fetch from "isomorphic-fetch"
 
-export function* helloSaga() {
-    console.log('Hello Sagas!')
+export function* getTasks() {
+    yield delay(2000)
+    const response = yield fetch("/api/tasks")
+    const tasks = yield response.json();
+    yield put({ type: types.GET_TASKS_COMPLETE, tasks })
 }
 
-// Our worker Saga: will perform the async increment task
-export function* incrementAsync() {
-    yield delay(1000)
-    console.log("After delay")
-    yield put({ type: 'INCREMENT' })
-}
-
-// Our watcher Saga: spawn a new incrementAsync task on each INCREMENT_ASYNC
-export function* watchIncrementAsync() {
-    yield takeEvery('INCREMENT_ASYNC', incrementAsync)
+export function* watchGetTasks() {
+    yield takeEvery(types.GET_TASKS, getTasks)
 }
 
 export default function* rootSaga() {
     yield all([
-        helloSaga(),
-        watchIncrementAsync()
+        watchGetTasks()
     ]);
 }

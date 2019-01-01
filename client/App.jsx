@@ -1,46 +1,15 @@
 import React from "react"
-import { connect } from 'react-redux'
-import * as actions from "./actions/todoAction"
-import { bindActionCreators } from "redux";
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
+import Tasks from "./components/Tasks.jsx"
+import NotFound from "./components/NotFound.jsx"
 
-const AGpp = () => <div>AGPP</div>
-const Rota = () => <div>Rota</div>
+const App = () => (
+    <div className="application">
+        <Switch>
+            <Route path="/tasks" component={Tasks} />
+            <Route path="/" exact component={Tasks} />
+            <Route component={NotFound} />
+        </Switch>
+    </div>)
 
-class App extends React.Component {
-    componentDidMount() {
-        this.props.ahah("HAHA")
-    }
-
-    render() {
-        console.log(this.props.todo)
-        return (
-            <div>
-                <Route path="/ahaa" component={AGpp} />
-                <Route path="/" exact component={Rota} />
-            </div>)
-    }
-}
-
-const mapStateToProps = (state, ownProps) => {
-    return {
-        todo: state.default
-    }
-}
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        ahah: (test) => {
-            //dispatch(actions.addTodo(test))
-            dispatch({type: 'INCREMENT_ASYNC'})
-        },
-        todoActions: bindActionCreators(actions, dispatch),
-    }
-}
-
-const FilterLink = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App)
-
-export default FilterLink
+export default App
