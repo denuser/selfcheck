@@ -9,7 +9,6 @@ class DatabaseClient {
             try {
                 const client = await MongoClient.connect(url, { useNewUrlParser: true });
                 const db = client.db(dbName);
-                client.close();
                 const result = await db.collection('tasks').insertOne({ question, answer });
                 client.close();
                 resolve(result.ops[0]);
@@ -21,25 +20,35 @@ class DatabaseClient {
     }
 
     getTask(taskId) {
-        const client = new MongoClient(url);
-        client.connect(url, function (err, client) {
-            const db = client.db(dbName);
-            db.collection('tasks').find({ _id: taskId }).toArray(function (err, docs) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const client = await MongoClient.connect(url, { useNewUrlParser: true });
+                const db = client.db(dbName);
+
+                const docs = await db.collection('tasks').find({ _id: taskId });
                 client.close();
-                return docs[0];
-            });
-        });
+                resolve(result.ops[0]);
+            }
+            catch (ex) {
+                reject(ex)
+            }
+        })
     }
 
-    getTasks({ question, answer }) {
-        const client = new MongoClient(url);
-        client.connect(url, function (err, client) {
-            const db = client.db(dbName);
-            db.collection('tasks').find({}).toArray(function (err, docs) {
+    getTasks() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const client = await MongoClient.connect(url, { useNewUrlParser: true });
+                const db = client.db(dbName);
+
+                const docs = await db.collection('tasks').find({});
+                resolve(docs.toArray());
                 client.close();
-                return docs;
-            });
-        });
+            }
+            catch (ex) {
+                reject(ex)
+            }
+        })
     }
 
     removeTask(taskId) {

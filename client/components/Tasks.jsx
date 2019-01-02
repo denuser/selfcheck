@@ -14,7 +14,7 @@ class Tasks extends React.Component {
             return <div>Fetching...</div>
         }
         else {
-            return <div>{tasks.map((item, index) => <div key={index}>{item}</div>)}</div>
+            return <div>{tasks.map((item, index) => <div key={item._id}>{item.question} {item.answer} {item._id}</div>)}</div>
         }
     }
 }

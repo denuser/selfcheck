@@ -6,38 +6,50 @@ const apiRouter = Router();
 const client = new DatabaseClient();
 let logger;
 
+const withErrorHandler = (action) => {
+    try {
+        action();
+    }
+    catch (ex) {
+        logger.log({
+            date: new Date(),
+            level: 'error',
+            message: ex.toString()
+        });
+        res.status(500).send("Internal server error");
+    }
+}
+
 function router(loggerInstance) {
     logger = loggerInstance;
 
+    apiRouter.use(function timeLog(req, res, next) {
+        res.setHeader('Content-Type', 'application/json');
+        next();
+    });
+
     apiRouter.get("/",
         (req, res) => {
-            res.setHeader('Content-Type', 'application/json');
+
             res.send(JSON.stringify({ a: 4 }, null, 3));
         });
 
     apiRouter.get("/tasks",
-        (req, res) => {
-            const tasks = client.getTasks();
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(["task 1", "task 2"], null, 3));
+        // TODO: paging?
+        async (req, res) => {
+            withErrorHandler(async () => {
+                const tasks = await client.getTasks()
+                res.send(JSON.stringify(tasks));
+            });
         });
 
     apiRouter.post("/tasks",
         async (req, res) => {
-            const task = req.body;
-            try {
+            withErrorHandler(async () => {
+                const task = req.body;
                 const createdTask = await client.insertTask(task)
-                res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify(createdTask));
-            }
-            catch (ex) {
-                logger.log({
-                    date: new Date(),
-                    level: 'error',
-                    message: ex.toString()
-                });
-                res.status(500).send("Internal server error");
-            }
+            })
         });
 
     apiRouter.get("*",
