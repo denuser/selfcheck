@@ -11,12 +11,30 @@ export function* getTasks() {
 }
 
 export function* addTask(payload) {
-    yield delay(2000)
     const { question, answer } = payload
-    console.info(question, answer)
-    // const response = yield fetch("/api/tasks",)
-    // const task = yield response.json();
-    yield put({ type: types.ADD_TASK_COMPLETE, task: {} })
+    try {
+        const response = yield fetch("/api/tasks", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ question, answer })
+        })
+
+        if (!response.ok) {
+            const error = yield response.text()
+            yield put({ type: types.ADD_TASK_FAILED, error })
+        }
+        else {
+            const task = yield response.json();
+            yield put({ type: types.ADD_TASK_COMPLETE, task })
+        }
+    }
+    catch (error) {
+        console.log(error)
+        yield put({ type: types.ADD_TASK_FAILED, error })
+    }
 }
 
 export function* watchGetTasks() {
