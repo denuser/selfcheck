@@ -2,6 +2,7 @@ import React from "react"
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
 import * as tasksActions from "../actions/tasksActions"
+import { Link } from "react-router-dom"
 
 class Tasks extends React.Component {
     componentDidMount() {
@@ -14,7 +15,8 @@ class Tasks extends React.Component {
             return <div>Fetching...</div>
         }
         else {
-            return <div>{tasks.map((item, index) => <div key={item._id}>{item.question} {item.answer} {item._id}</div>)}</div>
+            return <div style={{ border: "2px solid red" }}>{tasks.map((item, index) =>
+                <div key={item._id}>{item.question} {item.answer} <Link to={`/tasks/${item._id}`}>{item._id}</Link></div>)}</div>
         }
     }
 }

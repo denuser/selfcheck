@@ -10,6 +10,13 @@ export function* getTasks() {
     yield put({ type: types.GET_TASKS_COMPLETE, tasks })
 }
 
+export function* getTask(payload) {
+    const { id } = payload
+    const response = yield fetch(`/api/tasks/${id}`)
+    const task = yield response.json();
+    yield put({ type: types.GET_TASK_COMPLETE, task })
+}
+
 export function* addTask(payload) {
     const { question, answer } = payload
     try {
@@ -41,6 +48,10 @@ export function* watchGetTasks() {
     yield takeEvery(types.GET_TASKS, getTasks)
 }
 
+export function* watchGetTask() {
+    yield takeEvery(types.GET_TASK, getTask)
+}
+
 export function* watchAddTask() {
     yield takeEvery(types.ADD_TASK, addTask)
 }
@@ -48,6 +59,7 @@ export function* watchAddTask() {
 export default function* rootSaga() {
     yield all([
         watchGetTasks(),
+        watchGetTask(),
         watchAddTask()
     ]);
 }
