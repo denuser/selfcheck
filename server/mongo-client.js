@@ -1,54 +1,28 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectId } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'selfcheck';
 
 class DatabaseClient {
     insertTask({ question, answer }) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const client = await MongoClient.connect(url, { useNewUrlParser: true });
-                const db = client.db(dbName);
-                const result = await db.collection('tasks').insertOne({ question, answer });
-                client.close();
-                resolve(result.ops[0]);
-            }
-            catch (ex) {
-                reject(ex)
-            }
-        })
+        return createPromise(async (resolve, db) => {
+            const result = await db.collection('tasks').insertOne({ question, answer });
+            resolve(result.ops[0]);
+        });
     }
 
     getTask(taskId) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const client = await MongoClient.connect(url, { useNewUrlParser: true });
-                const db = client.db(dbName);
-
-                const docs = await db.collection('tasks').find({ _id: taskId });
-                client.close();
-                resolve(result.ops[0]);
-            }
-            catch (ex) {
-                reject(ex)
-            }
-        })
+        return createPromise(async (resolve, db) => {
+            const doc = await db.collection('tasks').findOne({ '_id': new ObjectId(taskId) });
+            resolve(doc);
+        });
     }
 
     getTasks() {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const client = await MongoClient.connect(url, { useNewUrlParser: true });
-                const db = client.db(dbName);
-
-                const docs = await db.collection('tasks').find({});
-                resolve(docs.toArray());
-                client.close();
-            }
-            catch (ex) {
-                reject(ex)
-            }
-        })
+        return createPromise(async (resolve, db) => {
+            const docs = await db.collection('tasks').find({});
+            resolve(docs.toArray());
+        });
     }
 
     removeTask(taskId) {
@@ -59,6 +33,21 @@ class DatabaseClient {
             });
         });
     }
+}
+
+function createPromise(action) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const client = await MongoClient.connect(url, { useNewUrlParser: true });
+            const db = client.db(dbName);
+
+            await action(resolve, db);
+            client.close();
+        }
+        catch (ex) {
+            reject(ex)
+        }
+    })
 }
 
 module.exports = DatabaseClient

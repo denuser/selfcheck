@@ -43,6 +43,15 @@ function router(loggerInstance) {
             });
         });
 
+    apiRouter.get("/tasks/:id",
+        async (req, res) => {
+            withErrorHandler(async () => {
+                const { id } = req.params
+                const task = await client.getTask(id)
+                res.send(JSON.stringify(task));
+            });
+        });
+
     apiRouter.post("/tasks",
         async (req, res) => {
             withErrorHandler(async () => {
