@@ -1,0 +1,18 @@
+{
+    "web": {
+        "client_id": "659700822403-tgicbpc3anodgpg80cnfchsp36uk3ot4.apps.googleusercontent.com",
+        "project_id": "x-catwalk-227514",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://www.googleapis.com/oauth2/v3/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "23GUDgNhVNPQYhW8NqvDfuAT",
+        "redirect_uris": [
+            "http://localhost:3000",
+            "http://localhost:3000/oauth2callback",
+            "http://localhost:9000/oauth2callback"
+        ],
+        "javascript_origins": [
+            "http://localhost"
+        ]
+    }
+}

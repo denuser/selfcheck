@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\server\\server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Auth",
+            "program": "${workspaceFolder}\\server\\gmail\\index.js"
         }
     ]
 }
