@@ -42,10 +42,11 @@ async function main() {
     // const res = await oAuth2Client.verifyIdToken({
     //     idToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijc5NzhhOTEzNDcyNjFhMjkxYmQ3MWRjYWI0YTQ2NGJlN2QyNzk2NjYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2NTk3MDA4MjI0MDMtdGdpY2JwYzNhbm9kZ3BnODBjbmZjaHNwMzZ1azNvdDQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2NTk3MDA4MjI0MDMtdGdpY2JwYzNhbm9kZ3BnODBjbmZjaHNwMzZ1azNvdDQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDYzNTc5Mjg5MTg4NDMxMjM1NTMiLCJhdF9oYXNoIjoibzZCZ0JsSEFlUUNxeENiNlhsU0g0USIsImlhdCI6MTU0NjUzNzg0MSwiZXhwIjoxNTQ2NTQxNDQxfQ.fIvlg5DRMJ8gUmRMlrMybAecp8pLct0Hsn_K6SR-DvcxvdbkebjYADRAjdpyYcA2q6Su7xVRFDCE8lCc3lQkOu7sXWgkX4b1KRCCJ2tNlBO_ulW9tL1J9mOB1gvWhL_ab9wAu0bHjygkytU88tA7Drywf2sC7pIv8Sbr7LWvMugDD5Vqq-Nb-u_bQHAZ2tOe1TNyupBhjhrzWlFrSXciMYMRjQpYdIAZrs5858pRaLC7l39VMODpQVzHkCXlrZWFnFgQgYTA-L9hWju0hDbcgh3DWrIRIbsdE_V4G1Np7cQUP4kGYnpAVogg-CczkpoYbMwabxH3qd5LTLHizXE_Qw"
     // })
-
+    
     const isExpiring = oAuth2Client.isTokenExpiring()
     const rtes = await oAuth2Client.getAccessToken();
-    
+    await oAuth2Client.revokeToken(oAuth2Client.credentials.access_token)
+    const v2 = await oAuth2Client.getAccessToken();
     // After acquiring an access_token, you may want to check on the audience, expiration,
     // or original scopes requested.  You can do that with the `getTokenInfo` method.
     const tokenInfo = await oAuth2Client.getTokenInfo(
