@@ -4,6 +4,8 @@ const app = express();
 const apiRouter = require("./apiRouter")
 const bodyParser = require('body-parser')
 const winston = require("winston")
+const auth = require("./auth-service")
+const indexTemplate = require("./templates/index")
 
 const logger = winston.createLogger({
     level: 'info',
@@ -24,8 +26,17 @@ app.use(express.static(path.join(__dirname, '../build')));
 
 app.use('/api', new apiRouter(logger));
 
+app.get('/oauth2callback', async (req, res) => {
+    //TODO
+    const tokens = await auth.getTokensByCode(req.url)
+    await auth.saveTokens(tokens);
+    res.redirect("/")
+});
+
 app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'templates', 'index.html'));
+    const url = auth.getLoginUrl();
+    //TODO: pass to client?
+    res.send(indexTemplate({ loginUrl: url, isLoggedIn: false }));
 });
 
 app.get("*",
