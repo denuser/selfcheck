@@ -5,6 +5,7 @@ const opn = require('opn');
 const destroyer = require('server-destroy');
 const path = require("path")
 const { MongoClient, ObjectId } = require('mongodb');
+const DbClient = require("./login-db-client")
 
 const keys = require(path.resolve(__dirname, './gmail/keys.json'));
 
@@ -23,8 +24,8 @@ module.exports = {
 
         const authorizeUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: 'openid',
-            prompt: 'consent'
+            scope: ['https://www.googleapis.com/auth/plus.me', 'profile', 'email'],
+            //prompt: 'consent'
         });
 
         return authorizeUrl;
@@ -40,12 +41,22 @@ module.exports = {
     },
 
     getTokensByCode: async function (returnUrl) {
+        const dbClient = new DbClient();
         const oAuth2Client = getClient();
+
         const qs = new url.URL(returnUrl, 'http://localhost:9000')
             .searchParams;
         const code = qs.get('code');
         const r = await oAuth2Client.getToken(code);
 
+        const ticket = await oAuth2Client.verifyIdToken({ idToken: r.tokens.id_token })
+
+        const payload = ticket.getPayload();
+        dbClient.insertUserInfo(payload);
+
+        const userId = ticket.getUserId();
+        const attr = ticket.getAttributes();
+        const info = await oAuth2Client.getTokenInfo(r.tokens.access_token)
         return r.tokens;
     }
 }

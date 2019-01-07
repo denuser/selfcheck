@@ -3,9 +3,9 @@ module.exports = function ({ isLoggedIn, loginUrl }) {
 
 <body>
     <div class="wrapper">
-        <div id="root"> </div>
-        ${!isLoggedIn ? "<a href=\"" + loginUrl + "\">Login</a>" : ""}
-        <script src="/bundle.js"></script>
+        ${!isLoggedIn
+            ? "<a href=\"" + loginUrl + "\">Login</a>"
+            : "<div id=\"root\"><script src=\"/bundle.js\"></script></div>"}
     </div>
 </body>
 

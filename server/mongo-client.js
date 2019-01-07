@@ -3,12 +3,9 @@ const { MongoClient, ObjectId } = require('mongodb');
 const url = 'mongodb://localhost:27017';
 const dbName = 'selfcheck';
 
-class DatabaseClient {
-    insertTask({ question, answer }) {
-        return createPromise(async (resolve, db) => {
-            const result = await db.collection('tasks').insertOne({ question, answer });
-            resolve(result.ops[0]);
-        });
+class TasksClient {
+    insertTask(task) {
+        return createPromiseForInsert(task, 'tasks');
     }
 
     getTask(taskId) {
@@ -35,6 +32,13 @@ class DatabaseClient {
     }
 }
 
+function createPromiseForInsert(document, collection) {
+    return createPromise(async (resolve, db) => {
+        const result = await db.collection(collection).insertOne(document);
+        resolve(result.ops[0]);
+    });
+}
+
 function createPromise(action) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -50,4 +54,4 @@ function createPromise(action) {
     })
 }
 
-module.exports = DatabaseClient
+module.exports = TasksClient

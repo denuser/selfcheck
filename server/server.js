@@ -3,6 +3,7 @@ const path = require('path');
 const app = express();
 const apiRouter = require("./apiRouter")
 const bodyParser = require('body-parser')
+const session = require('express-session')
 const winston = require("winston")
 const auth = require("./auth-service")
 const indexTemplate = require("./templates/index")
@@ -20,6 +21,13 @@ const logger = winston.createLogger({
     ]
 });
 
+app.use(session({
+    secret: 'keyboard cat',
+    cookie: { secure: true, maxAge: 60000, },
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../build')));
@@ -34,6 +42,7 @@ app.get('/oauth2callback', async (req, res) => {
 });
 
 app.get('/*', function (req, res) {
+    req.session.aha = "123123123123123"
     const url = auth.getLoginUrl();
     //TODO: pass to client?
     res.send(indexTemplate({ loginUrl: url, isLoggedIn: false }));
