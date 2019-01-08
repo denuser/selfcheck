@@ -2,13 +2,52 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'selfcheck';
+const uniqid = require('uniqid');
 
 class LoginClient {
     insertUserInfo(info) {
-        // findOneAndUpdate should be used. need to check what it will return if the record exists/not exists
-        // if not exists insert should be used
+        const collection = 'users'
+        
+        return createPromise(async (resolve, db) => {
+            const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
+            if (updateResult.value) {
+                resolve(value);
+            }
+            else {
+                const result = await db.collection(collection).insertOne(info);
+                resolve(result.ops[0]);
+            }
+        });
+    }
 
-        return createPromiseForInsert(info, 'users');
+    insertTokenInfo(info) {
+        const collection = 'tokens'
+        
+        return createPromise(async (resolve, db) => {
+            const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
+            if (updateResult.value) {
+                resolve(value);
+            }
+            else {
+                const result = await db.collection(collection).insertOne(info);
+                resolve(result.ops[0]);
+            }
+        });
+    }
+
+    insertSessionInfo(info) {
+        const collection = 'sessions'
+        
+        return createPromise(async (resolve, db) => {
+            const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
+            if (updateResult.value) {
+                resolve(value);
+            }
+            else {
+                const result = await db.collection(collection).insertOne(info);
+                resolve(result.ops[0]);
+            }
+        });
     }
 }
 
