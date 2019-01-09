@@ -1,11 +1,7 @@
-const { OAuth2Client } = require('google-auth-library');
-const http = require('http');
-const url = require('url');
-const opn = require('opn');
-const destroyer = require('server-destroy');
-const path = require("path")
-const { MongoClient, ObjectId } = require('mongodb');
-const DbClient = require("./login-db-client")
+import { OAuth2Client } from 'google-auth-library'
+import * as url from 'url'
+import * as path from "path"
+import DbClient from "./login-db-client"
 
 const keys = require(path.resolve(__dirname, './gmail/keys.json'));
 
@@ -18,7 +14,8 @@ function getClient() {
 
     return oAuth2Client;
 }
-module.exports = {
+
+export default {
     getLoginUrl: function () {
         const oAuth2Client = getClient();
 
@@ -49,10 +46,10 @@ module.exports = {
         const code = qs.get('code');
         const r = await oAuth2Client.getToken(code);
 
-        const ticket = await oAuth2Client.verifyIdToken({ idToken: r.tokens.id_token })
+        const ticket = await oAuth2Client.verifyIdToken({ idToken: r.tokens.id_token, audience: keys.web.client_id })
 
         const payload = ticket.getPayload();
-        dbClient.insertUserInfo(payload);
+        await dbClient.insertUserInfo(payload);
 
         const userId = ticket.getUserId();
         const attr = ticket.getAttributes();

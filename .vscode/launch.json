@@ -15,6 +15,24 @@
             "request": "launch",
             "name": "Auth",
             "program": "${workspaceFolder}\\server\\gmail\\index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch current file w/ ts-node",
+            "protocol": "inspector",
+            "args": [
+                "${relativeFile}"
+            ],
+            "cwd": "${workspaceRoot}",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],
+            "env": {
+                "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"ES2015\"]}"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }

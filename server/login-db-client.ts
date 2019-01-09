@@ -5,13 +5,13 @@ const dbName = 'selfcheck';
 const uniqid = require('uniqid');
 
 class LoginClient {
-    insertUserInfo(info) {
+    insertUserInfo(info: any) {
         const collection = 'users'
-        
+
         return createPromise(async (resolve, db) => {
             const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
             if (updateResult.value) {
-                resolve(value);
+                resolve(updateResult.value);
             }
             else {
                 const result = await db.collection(collection).insertOne(info);
@@ -22,11 +22,11 @@ class LoginClient {
 
     insertTokenInfo(info) {
         const collection = 'tokens'
-        
+
         return createPromise(async (resolve, db) => {
             const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
             if (updateResult.value) {
-                resolve(value);
+                resolve(updateResult.value);
             }
             else {
                 const result = await db.collection(collection).insertOne(info);
@@ -37,11 +37,11 @@ class LoginClient {
 
     insertSessionInfo(info) {
         const collection = 'sessions'
-        
+
         return createPromise(async (resolve, db) => {
             const updateResult = await db.collection(collection).findOneAndUpdate({ sub: info.sub }, { $set: info })
             if (updateResult.value) {
-                resolve(value);
+                resolve(updateResult.value);
             }
             else {
                 const result = await db.collection(collection).insertOne(info);
@@ -73,4 +73,4 @@ function createPromise(action) {
     })
 }
 
-module.exports = LoginClient
+export default LoginClient

@@ -1,12 +1,12 @@
-const { Router } = require("express")
-const DatabaseClient = require("./mongo-client")
-const stringifyObject = require('stringify-object');
+import { Router }  from "express"
+// const DatabaseClient = require("./mongo-client")
+// const stringifyObject = require('stringify-object');
 
 const apiRouter = Router();
-const client = new DatabaseClient();
+// const client = new DatabaseClient();
 let logger;
 
-const withErrorHandler = (action) => {
+const withErrorHandler = (res, action) => {
     try {
         action();
     }
@@ -37,27 +37,27 @@ function router(loggerInstance) {
     apiRouter.get("/tasks",
         // TODO: paging?
         async (req, res) => {
-            withErrorHandler(async () => {
-                const tasks = await client.getTasks()
-                res.send(JSON.stringify(tasks));
+            withErrorHandler(res, async () => {
+                // const tasks = await client.getTasks()
+                // res.send(JSON.stringify(tasks));
             });
         });
 
     apiRouter.get("/tasks/:id",
         async (req, res) => {
-            withErrorHandler(async () => {
+            withErrorHandler(res, async () => {
                 const { id } = req.params
-                const task = await client.getTask(id)
-                res.send(JSON.stringify(task));
+                // const task = await client.getTask(id)
+                // res.send(JSON.stringify(task));
             });
         });
 
     apiRouter.post("/tasks",
         async (req, res) => {
-            withErrorHandler(async () => {
+            withErrorHandler(res, async () => {
                 const task = req.body;
-                const createdTask = await client.insertTask(task)
-                res.send(JSON.stringify(createdTask));
+                // const createdTask = await client.insertTask(task)
+                // res.send(JSON.stringify(createdTask));
             })
         });
 
@@ -69,4 +69,4 @@ function router(loggerInstance) {
     return apiRouter
 }
 
-module.exports = router
+export default router

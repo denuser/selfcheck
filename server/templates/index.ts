@@ -1,4 +1,4 @@
-module.exports = function ({ isLoggedIn, loginUrl }) {
+export default function ({ isLoggedIn, loginUrl }) {
     return `<html>
 
 <body>

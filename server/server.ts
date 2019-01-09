@@ -1,13 +1,14 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-const apiRouter = require("./apiRouter")
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const winston = require("winston")
-const auth = require("./auth-service")
-const indexTemplate = require("./templates/index")
+import * as express from "express";
+import * as path from 'path';
+import apiRouter from "./apiRouter"
+import * as bodyParser from 'body-parser'
+import * as session from 'express-session'
+import * as winston from "winston"
+import auth from "./auth-service"
+import indexTemplate from "./templates/index"
+import { Int32 } from "bson";
 
+const app = express();
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
@@ -32,10 +33,11 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../build')));
 
-app.use('/api', new apiRouter(logger));
+app.use('/api', apiRouter(logger));
 
 app.get('/oauth2callback', async (req, res) => {
     //TODO
+    const p: Int32 = 1;
     const tokens = await auth.getTokensByCode(req.url)
     await auth.saveTokens(tokens);
     res.redirect("/")
