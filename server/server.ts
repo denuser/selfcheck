@@ -3,22 +3,22 @@ import * as path from 'path';
 import apiRouter from "./apiRouter"
 import * as bodyParser from 'body-parser'
 import * as session from 'express-session'
-import * as winston from "winston"
+import { createLogger, format, transports } from "winston"
 import auth from "./auth-service"
 import indexTemplate from "./templates/index"
 import { Int32 } from "bson";
 
 const app = express();
-const logger = winston.createLogger({
+const logger = createLogger({
     level: 'info',
-    format: winston.format.json(),
+    format: format.json(),
     transports: [
         //
         // - Write to all logs with level `info` and below to `combined.log` 
         // - Write all logs error (and below) to `error.log`.
         //
-        new winston.transports.File({ filename: path.resolve(__dirname, '../logs/error.log'), level: 'error' }),
-        new winston.transports.File({ filename: path.resolve(__dirname, '../logs/combined.log') })
+        new transports.File({ filename: path.resolve(__dirname, '../logs/error.log'), level: 'error' }),
+        new transports.File({ filename: path.resolve(__dirname, '../logs/combined.log') })
     ]
 });
 
