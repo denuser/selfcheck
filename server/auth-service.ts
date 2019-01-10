@@ -1,4 +1,4 @@
-import { OAuth2Client } from 'google-auth-library'
+import { OAuth2Client, Credentials } from 'google-auth-library'
 import * as url from 'url'
 import * as path from "path"
 import DbClient from "./login-db-client"
@@ -16,7 +16,7 @@ function getClient() {
 }
 
 export default {
-    getLoginUrl: function () {
+    getLoginUrl: function (): string {
         const oAuth2Client = getClient();
 
         const authorizeUrl = oAuth2Client.generateAuthUrl({
@@ -28,16 +28,16 @@ export default {
         return authorizeUrl;
     },
 
-    saveTokens: async function (tokens) {
+    saveTokens: async function (tokens: Credentials) {
         console.log(tokens);
         //TODO: save to mongo
     },
 
-    getTokens: async function (userId) {
+    getTokens: async function (userId: string) {
         //TODO: get from mongo
     },
 
-    getTokensByCode: async function (returnUrl) {
+    getTokensByCode: async function (returnUrl: string) {
         const dbClient = new DbClient();
         const oAuth2Client = getClient();
 
