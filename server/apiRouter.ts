@@ -1,10 +1,8 @@
-import { Router }  from "express"
-// const DatabaseClient = require("./mongo-client")
-// const stringifyObject = require('stringify-object');
+import { Router } from "express"
+import winston = require("winston");
 
 const apiRouter = Router();
-// const client = new DatabaseClient();
-let logger;
+let logger: winston.Logger;
 
 const withErrorHandler = (res, action) => {
     try {
@@ -20,7 +18,7 @@ const withErrorHandler = (res, action) => {
     }
 }
 
-function router(loggerInstance) {
+function router(loggerInstance: winston.Logger) {
     logger = loggerInstance;
 
     apiRouter.use(function timeLog(req, res, next) {

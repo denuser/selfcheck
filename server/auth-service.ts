@@ -1,7 +1,7 @@
 import { OAuth2Client, Credentials } from 'google-auth-library'
 import * as url from 'url'
 import * as path from "path"
-import DbClient from "./login-db-client"
+import DbClient from "./database/LoginClient"
 
 const keys = require(path.resolve(__dirname, './gmail/keys.json'));
 
@@ -21,7 +21,7 @@ export default {
 
         const authorizeUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: ['https://www.googleapis.com/auth/plus.me', 'profile', 'email'],
+            scope: ['profile', 'email'],
             //prompt: 'consent'
         });
 
