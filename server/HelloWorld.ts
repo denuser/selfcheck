@@ -1,8 +1,4 @@
-class Startup {
-    public static main(): number {
-        console.log('Hello World');
-        return 0;
-    }
+export const main = (): string => {
+    console.log('Hello World');
+    return 'hello world';
 }
-
-Startup.main(); 
