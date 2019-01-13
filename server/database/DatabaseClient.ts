@@ -2,7 +2,6 @@ import { MongoClient, ObjectId } from 'mongodb'
 
 const url = 'mongodb://localhost:27017';
 
-
 class DatabaseClient {
     constructor(dbName = 'selfcheck') {
         this.dbName = dbName

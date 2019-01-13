@@ -1,13 +1,7 @@
 import DatabaseClient from "./DatabaseClient"
-import { ObjectId } from "mongodb";
-const dbClient = new DatabaseClient();
+import { TaskRow } from "../interfaces"
 
-interface TaskRow {
-    readonly _id?: ObjectId
-    question: string
-    answer: string
-    lastTouched?: Date
-}
+const dbClient = new DatabaseClient();
 
 class TasksClient {
     insertTask(document: TaskRow): Promise<TaskRow> {

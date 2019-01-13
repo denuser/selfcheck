@@ -7,6 +7,7 @@ import { createLogger, format, transports } from "winston"
 import auth from "./auth-service"
 import indexTemplate from "./templates/index"
 import { Int32 } from "bson";
+import * as uniqid from "uniqid"
 
 const app = express();
 const logger = createLogger({
@@ -36,10 +37,11 @@ app.use(express.static(path.join(__dirname, '../build')));
 app.use('/api', apiRouter(logger));
 
 app.get('/oauth2callback', async (req, res) => {
-    //TODO
-    const p: Int32 = 1;
     const tokens = await auth.getTokensByCode(req.url)
     await auth.saveTokens(tokens);
+    const sessionId = uniqid();
+    req.session.sessionId = sessionId
+    await auth.saveSession(tokens.userId, sessionId)
     res.redirect("/")
 });
 

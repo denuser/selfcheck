@@ -2,6 +2,7 @@ import { OAuth2Client, Credentials } from 'google-auth-library'
 import * as url from 'url'
 import * as path from "path"
 import DbClient from "./database/LoginClient"
+import * as I from "./interfaces"
 
 const keys = require(path.resolve(__dirname, './gmail/keys.json'));
 
@@ -28,21 +29,27 @@ export default {
         return authorizeUrl;
     },
 
-    saveTokens: async function (tokens: Credentials) {
-        console.log(tokens);
-        //TODO: save to mongo
+    saveTokens: async function (tokens: I.UserTokenRow) {
+        const dbClient = new DbClient();
+
+        await dbClient.insertTokensInfo({ ...tokens });
+    },
+
+    saveSession: async function (userId: string, sessionId: string): Promise<void> {
+        const dbClient = new DbClient();
+
+        await dbClient.insertSessionInfo({ userId, sessionId });
     },
 
     getTokens: async function (userId: string) {
         //TODO: get from mongo
     },
 
-    getTokensByCode: async function (returnUrl: string) {
+    getTokensByCode: async function (returnUrl: string): Promise<I.UserTokenRow> {
         const dbClient = new DbClient();
         const oAuth2Client = getClient();
 
-        const qs = new url.URL(returnUrl, 'http://localhost:9000')
-            .searchParams;
+        const qs = new url.URL(returnUrl, 'http://localhost:9000').searchParams;
         const code = qs.get('code');
         const r = await oAuth2Client.getToken(code);
 
@@ -51,9 +58,9 @@ export default {
         const payload = ticket.getPayload();
         await dbClient.insertUserInfo(payload);
 
-        const userId = ticket.getUserId();
-        const attr = ticket.getAttributes();
-        const info = await oAuth2Client.getTokenInfo(r.tokens.access_token)
-        return r.tokens;
+        // const userId = ticket.getUserId();
+        // const attr = ticket.getAttributes();
+        // const info = await oAuth2Client.getTokenInfo(r.tokens.access_token)
+        return { ...r.tokens, userId: payload.sub };
     }
 }
