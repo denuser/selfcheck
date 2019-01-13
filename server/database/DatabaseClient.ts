@@ -1,14 +1,20 @@
 import { MongoClient, ObjectId } from 'mongodb'
 
 const url = 'mongodb://localhost:27017';
-const dbName = 'selfcheck';
+
 
 class DatabaseClient {
+    constructor(dbName = 'selfcheck') {
+        this.dbName = dbName
+    }
+
+    dbName: string;
+
     execute(action: (resolve: any, db: any) => Promise<any>): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const client = await MongoClient.connect(url, { useNewUrlParser: true });
-                const db = client.db(dbName);
+                const db = client.db(this.dbName);
 
                 await action(resolve, db);
                 client.close();
@@ -16,6 +22,13 @@ class DatabaseClient {
             catch (ex) {
                 reject(ex)
             }
+        })
+    }
+
+    dropDatabase(): Promise<void> {
+        return this.execute(async (resolve, db) => {
+            db.dropDatabase()
+            resolve();
         })
     }
 
