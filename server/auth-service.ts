@@ -41,6 +41,12 @@ export default {
         await dbClient.insertSessionInfo({ userId, sessionId });
     },
 
+    tryGetSession: async function (sessionId: string): Promise<I.SessionInfo> {
+        const dbClient = new DbClient();
+
+        await dbClient.getSessionInfo(sessionId);
+    },
+
     getTokens: async function (userId: string) {
         //TODO: get from mongo
     },

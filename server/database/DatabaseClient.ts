@@ -58,6 +58,13 @@ class DatabaseClient {
         });
     }
 
+    getOneByCondition(collection: string, condition: Object): Promise<any> {
+        return this.execute(async (resolve, db) => {
+            const doc = await db.collection(collection).findOne(condition);
+            resolve(doc);
+        });
+    }
+
     getAll(collection: string): Promise<Array<any>> {
         return this.execute(async (resolve, db) => {
             const docs = await db.collection(collection).find({});

@@ -26,6 +26,13 @@ class LoginClient {
 
         return dbClient.updateOrInsertNew(collection, criteria, document)
     }
+
+    getSessionInfo(sessionId: string): Promise<I.SessionInfo> {
+        const collection = 'sessions'
+        const criteria = { sessionId };
+
+        return dbClient.getOneByCondition(collection, criteria)
+    }
 }
 
 export default LoginClient

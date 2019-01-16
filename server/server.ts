@@ -45,8 +45,13 @@ app.get('/oauth2callback', async (req, res) => {
     res.redirect("/")
 });
 
-app.get('/*', function (req, res) {
-    req.session.aha = "123123123123123"
+app.get('/*', async (req, res) => {
+    const { sessionId } = req.session
+    if (sessionId && sessionId != '') {
+        const session = await auth.tryGetSession(sessionId)
+    }
+
+
     const url = auth.getLoginUrl();
     //TODO: pass to client?
     res.send(indexTemplate({ loginUrl: url, isLoggedIn: false }));

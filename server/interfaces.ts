@@ -11,7 +11,8 @@ export interface TaskRow {
 
 export interface SessionInfo {
     sessionId: string,
-    userId: string
+    userId: string,
+    _id?: ObjectId
 }
 
 export interface UserTokenRow extends Credentials {
