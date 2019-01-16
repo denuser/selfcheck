@@ -52,10 +52,8 @@ app.get('/logout', async (req, res) => {
     const url = auth.getLoginUrl();
     if (sessionId && sessionId != '') {
         const session = await auth.tryGetSession(sessionId)
-        console.log(session)
         if (session) {
             const tokens = await auth.tryGetTokens(session.userId)
-            console.log(tokens)
             if (tokens) {
                 await auth.logout(tokens);
             }
@@ -68,18 +66,15 @@ app.get('/logout', async (req, res) => {
 
 app.get('/*', async (req, res) => {
     const { sessionId } = req.session
-    console.log(req.session.sessionId)
     let isLoggedIn = false
     const url = auth.getLoginUrl();
     if (sessionId && sessionId != '') {
         const session = await auth.tryGetSession(sessionId)
-        console.log(session)
         if (session) {
             const tokens = await auth.tryGetTokens(session.userId)
-            console.log(tokens)
             if (tokens) {
-                await auth.checkTokens(tokens);
-                isLoggedIn = true
+                const result = await auth.checkTokens(tokens);
+                if (result) isLoggedIn = true
             }
 
         }

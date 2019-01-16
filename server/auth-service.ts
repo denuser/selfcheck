@@ -53,23 +53,36 @@ export default {
         return await dbClient.getUserTokens(userId);
     },
 
-    logout: async function(tokens: I.UserTokenRow){
-        const oAuth2Client = getClient();
-        oAuth2Client.setCredentials(tokens)
-        await oAuth2Client.revokeCredentials()
-        const info = await oAuth2Client.getTokenInfo(tokens.access_token)
-        console.log(info)
+    logout: async function (tokens: I.UserTokenRow) {
+        try {
+            const oAuth2Client = getClient();
+            oAuth2Client.setCredentials(tokens)
+            console.log(tokens.access_token)
+            await oAuth2Client.revokeToken(tokens.access_token)
+            // const info = await oAuth2Client.getTokenInfo(tokens.access_token)
+            // const v2 = await oAuth2Client.refreshAccessToken();
+            // console.log(v2.credentials.access_token)
+        } catch (ex) {
+            console.error(ex)
+        }
     },
 
     checkTokens: async function (tokens: I.UserTokenRow): Promise<boolean> {
-        const dbClient = new DbClient();
-        const oAuth2Client = getClient();
-        oAuth2Client.setCredentials(tokens)
-        const headers = await oAuth2Client.getRequestHeaders()
-        const newCredentailsRow = Object.assign(tokens, oAuth2Client.credentials);
+        try {
+            const dbClient = new DbClient();
+            const oAuth2Client = getClient();
+            oAuth2Client.setCredentials(tokens)
+            await oAuth2Client.getTokenInfo(tokens.access_token)
+            await oAuth2Client.getRequestHeaders()
+            const newCredentailsRow = Object.assign(tokens, oAuth2Client.credentials);
 
-        await dbClient.insertTokensInfo(newCredentailsRow);
-        return true;
+            await dbClient.insertTokensInfo(newCredentailsRow);
+            return true;
+        }
+        catch (ex) {
+            console.error(ex)
+            return false
+        }
     },
 
     getTokensByCode: async function (returnUrl: string): Promise<I.UserTokenRow> {
