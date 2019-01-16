@@ -44,11 +44,32 @@ export default {
     tryGetSession: async function (sessionId: string): Promise<I.SessionInfo> {
         const dbClient = new DbClient();
 
-        await dbClient.getSessionInfo(sessionId);
+        return await dbClient.getSessionInfo(sessionId);
     },
 
-    getTokens: async function (userId: string) {
-        //TODO: get from mongo
+    tryGetTokens: async function (userId: string): Promise<I.UserTokenRow> {
+        const dbClient = new DbClient();
+
+        return await dbClient.getUserTokens(userId);
+    },
+
+    logout: async function(tokens: I.UserTokenRow){
+        const oAuth2Client = getClient();
+        oAuth2Client.setCredentials(tokens)
+        await oAuth2Client.revokeCredentials()
+        const info = await oAuth2Client.getTokenInfo(tokens.access_token)
+        console.log(info)
+    },
+
+    checkTokens: async function (tokens: I.UserTokenRow): Promise<boolean> {
+        const dbClient = new DbClient();
+        const oAuth2Client = getClient();
+        oAuth2Client.setCredentials(tokens)
+        const headers = await oAuth2Client.getRequestHeaders()
+        const newCredentailsRow = Object.assign(tokens, oAuth2Client.credentials);
+
+        await dbClient.insertTokensInfo(newCredentailsRow);
+        return true;
     },
 
     getTokensByCode: async function (returnUrl: string): Promise<I.UserTokenRow> {

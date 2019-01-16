@@ -33,6 +33,13 @@ class LoginClient {
 
         return dbClient.getOneByCondition(collection, criteria)
     }
+
+    getUserTokens(userId: string): Promise<I.UserTokenRow> {
+        const collection = 'tokens'
+        const criteria = { userId };
+
+        return dbClient.getOneByCondition(collection, criteria)
+    }
 }
 
 export default LoginClient

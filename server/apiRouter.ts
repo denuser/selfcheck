@@ -1,8 +1,10 @@
 import { Router } from "express"
 import winston = require("winston");
+import TasksClient from  "./database/TasksClient"
 
 const apiRouter = Router();
 let logger: winston.Logger;
+const client = new TasksClient();
 
 const withErrorHandler = (res, action) => {
     try {
@@ -54,8 +56,8 @@ function router(loggerInstance: winston.Logger) {
         async (req, res) => {
             withErrorHandler(res, async () => {
                 const task = req.body;
-                // const createdTask = await client.insertTask(task)
-                // res.send(JSON.stringify(createdTask));
+                const createdTask = await client.insertTask(task)
+                res.send(JSON.stringify(createdTask));
             })
         });
 

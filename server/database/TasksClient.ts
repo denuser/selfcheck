@@ -21,4 +21,4 @@ class TasksClient {
     }
 }
 
-module.exports = TasksClient
+export default TasksClient

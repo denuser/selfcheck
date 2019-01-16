@@ -8,6 +8,7 @@ import auth from "./auth-service"
 import indexTemplate from "./templates/index"
 import { Int32 } from "bson";
 import * as uniqid from "uniqid"
+import * as favicon from 'serve-favicon'
 
 const app = express();
 const logger = createLogger({
@@ -25,7 +26,7 @@ const logger = createLogger({
 
 app.use(session({
     secret: 'keyboard cat',
-    cookie: { secure: true, maxAge: 60000, },
+    cookie: { secure: false, maxAge: 60000 * 60 * 24, },
     resave: false,
     saveUninitialized: false
 }));
@@ -33,6 +34,7 @@ app.use(session({
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../build')));
+app.use(favicon(path.join(__dirname, '../static/favicon.png')));
 
 app.use('/api', apiRouter(logger));
 
@@ -45,16 +47,45 @@ app.get('/oauth2callback', async (req, res) => {
     res.redirect("/")
 });
 
-app.get('/*', async (req, res) => {
+app.get('/logout', async (req, res) => {
     const { sessionId } = req.session
+    const url = auth.getLoginUrl();
     if (sessionId && sessionId != '') {
         const session = await auth.tryGetSession(sessionId)
+        console.log(session)
+        if (session) {
+            const tokens = await auth.tryGetTokens(session.userId)
+            console.log(tokens)
+            if (tokens) {
+                await auth.logout(tokens);
+            }
+
+        }
     }
 
+    res.redirect("/")
+});
 
+app.get('/*', async (req, res) => {
+    const { sessionId } = req.session
+    console.log(req.session.sessionId)
+    let isLoggedIn = false
     const url = auth.getLoginUrl();
-    //TODO: pass to client?
-    res.send(indexTemplate({ loginUrl: url, isLoggedIn: false }));
+    if (sessionId && sessionId != '') {
+        const session = await auth.tryGetSession(sessionId)
+        console.log(session)
+        if (session) {
+            const tokens = await auth.tryGetTokens(session.userId)
+            console.log(tokens)
+            if (tokens) {
+                await auth.checkTokens(tokens);
+                isLoggedIn = true
+            }
+
+        }
+    }
+
+    res.send(indexTemplate({ loginUrl: url, isLoggedIn }));
 });
 
 app.get("*",
