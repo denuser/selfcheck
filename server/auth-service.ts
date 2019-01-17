@@ -29,6 +29,11 @@ export default {
         return authorizeUrl;
     },
 
+    getUserData: async function (userId: string): Promise<I.TokenPayloadRow> {
+        const dbClient = new DbClient();
+        return await dbClient.getUserInfo(userId)
+    },
+
     saveTokens: async function (tokens: I.UserTokenRow) {
         const dbClient = new DbClient();
 
@@ -53,12 +58,14 @@ export default {
         return await dbClient.getUserTokens(userId);
     },
 
-    logout: async function (tokens: I.UserTokenRow) {
+    logout: async function (tokens: I.UserTokenRow, session: I.SessionInfo): Promise<void> {
         try {
             const oAuth2Client = getClient();
+            const dbClient = new DbClient();
             oAuth2Client.setCredentials(tokens)
             console.log(tokens.access_token)
             await oAuth2Client.revokeToken(tokens.access_token)
+            await dbClient.cleanSessionData(session._id, tokens._id)
             // const info = await oAuth2Client.getTokenInfo(tokens.access_token)
             // const v2 = await oAuth2Client.refreshAccessToken();
             // console.log(v2.credentials.access_token)

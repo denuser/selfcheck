@@ -9,6 +9,7 @@ import indexTemplate from "./templates/index"
 import { Int32 } from "bson";
 import * as uniqid from "uniqid"
 import * as favicon from 'serve-favicon'
+import { TokenPayloadRow } from "./interfaces";
 
 const app = express();
 const logger = createLogger({
@@ -55,7 +56,8 @@ app.get('/logout', async (req, res) => {
         if (session) {
             const tokens = await auth.tryGetTokens(session.userId)
             if (tokens) {
-                await auth.logout(tokens);
+                await auth.logout(tokens, session);
+                req.session.sessionId = undefined
             }
 
         }
@@ -66,6 +68,7 @@ app.get('/logout', async (req, res) => {
 
 app.get('/*', async (req, res) => {
     const { sessionId } = req.session
+    let userData : TokenPayloadRow
     let isLoggedIn = false
     const url = auth.getLoginUrl();
     if (sessionId && sessionId != '') {
@@ -74,13 +77,16 @@ app.get('/*', async (req, res) => {
             const tokens = await auth.tryGetTokens(session.userId)
             if (tokens) {
                 const result = await auth.checkTokens(tokens);
-                if (result) isLoggedIn = true
+                if (result) {
+                    isLoggedIn = true
+                    userData = await auth.getUserData(session.userId)
+                }
             }
 
         }
     }
 
-    res.send(indexTemplate({ loginUrl: url, isLoggedIn }));
+    res.send(indexTemplate({ loginUrl: url, isLoggedIn, userData }));
 });
 
 app.get("*",

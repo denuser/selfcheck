@@ -72,9 +72,9 @@ class DatabaseClient {
         });
     }
 
-    deleteById(collection: string, id: string): Promise<boolean> {
+    deleteById(collection: string, id: string | ObjectId): Promise<boolean> {
         return this.execute(async (resolve, db) => {
-            await db.collection(collection).deleteOne({ '_id': new ObjectId(id) })
+            await db.collection(collection).deleteOne({ '_id': id instanceof ObjectId ? id : new ObjectId(id) })
             resolve(true);
         });
     }
